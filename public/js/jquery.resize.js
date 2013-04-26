@@ -8,28 +8,33 @@
  */
 var NAVY = NAVY || {};
 NAVY.Resize = function(target,options){
+    this.orignTarget = target;
     this.targetObj = $(target);
     var defaultOptions = {
         minWidth:100,
         minHeight:100,
-        startWidth:0,
-        startHeight:0,
+        startWidth:150,
+        startHeight:150,
         left:0,
         top:0,
         isMoveSpace:{
             x:3,
             y:3
-        }
+        },
+        limitObj: this.targetObj.offsetParent() || 'body'
     };
     $.extend(defaultOptions,options);
     this.options = defaultOptions;
+    this.limitObjWidth = this.options.limitObj.width();
+    this.limitObjHeight = this.options.limitObj.height();
     this.init();
 };
 NAVY.Resize.prototype = {
     init:function(){
         var _this = this;
         var targetObj = _this.targetObj;
-        targetObj.append(_this.makeResizeHtml());
+        var options = _this.options;
+        targetObj.append(_this.makeResizeHtml()).css({width:options.startWidth,height:options.startHeight});
         _this.resizeObjs = targetObj.find('.navy-window-resize');
         if(targetObj.css('position') === 'static'){
             targetObj.css('position','relative');
@@ -38,6 +43,7 @@ NAVY.Resize.prototype = {
         return this;
     },
     initEvent:function(){
+        var _this = this;
         var targetObj = this.targetObj;
         var resizeObjs = this.resizeObjs;
         var options = this.options;
@@ -46,8 +52,11 @@ NAVY.Resize.prototype = {
         var startPos = {startWidth:options.startWidth,startHeight:options.startHeight,left:options.left,top:options.top,pageX:0,pageY:0};//记录目标移动对象targetObj的left和top值
         var resizeValue =null;
         var moveValue = 0, moveValue2 = 0,positionValue = 0,positionValue2 = 0;
+        var limitObjWidth = this.limitObjWidth,limitObjHeight = this.limitObjHeight;
+        var tempValue,tempValue2;//temp the maxMoveValue
         resizeObjs.mousedown(function(e){
 //            direction = directionMap[$(this).attr('resize')];
+            targetObj = $(this).closest(_this.orignTarget);
             resizeValue = $(this).attr('resize');
             isResize = true;
             startPos.pageX = e.pageX;
@@ -72,53 +81,126 @@ NAVY.Resize.prototype = {
                         var moveValueY = curPage.y - startPos.pageY;//当前鼠标移动的y方向上的值
                         if(moveValueX % options.isMoveSpace.x === 0 || moveValueY % options.isMoveSpace.y === 0){
                             if(resizeValue === 't'){
-                                positionValue = startPos.top + moveValueY;
+                                positionValue = Math.max((startPos.top + moveValueY),0);
                                 moveValue = startPos.startHeight - moveValueY;
                                 moveValue = moveValue <= minHeight ? minHeight : moveValue;
-                                targetObj.css({height:moveValue,top:positionValue});
+                                tempValue = limitObjHeight-positionValue;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue
+                                }
+                                if(moveValue === minHeight){
+                                    targetObj.css({height:moveValue});
+                                }else{
+                                    targetObj.css({height:moveValue,top:positionValue});
+                                }                               
                             }else if(resizeValue === 'b'){
                                 moveValue = startPos.startHeight + moveValueY;
                                 moveValue = moveValue <= minHeight ? minHeight : moveValue;
+                                tempValue = limitObjHeight - startPos.top;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
                                 targetObj.css({height:moveValue});
                             }else if(resizeValue === 'l'){
-                                positionValue = startPos.left + moveValueX;
+                                positionValue = Math.max((startPos.left + moveValueX),0);
                                 moveValue = startPos.startWidth - moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
-                                targetObj.css({width:moveValue,left:positionValue});
+                                tempValue = limitObjWidth - positionValue;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
+                                if(moveValue === minWidth){
+                                    targetObj.css({width:moveValue});
+                                }else{
+                                    targetObj.css({width:moveValue,left:positionValue});
+                                }                               
                             }else if(resizeValue === 'r'){
                                 moveValue = startPos.startWidth + moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
+                                tempValue = limitObjWidth - startPos.left;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
                                 targetObj.css({width:moveValue});
                             }else if(resizeValue === 'rt'){
                                 moveValue = startPos.startWidth + moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
                                 moveValue2 = startPos.startHeight - moveValueY;
                                 moveValue2 = moveValue2 <= minHeight ? minHeight : moveValue2;
-                                positionValue = startPos.top + moveValueY;
-                                targetObj.css({width:moveValue,height:moveValue2,top:positionValue});
-                                return false;
+                                positionValue = Math.max((startPos.top + moveValueY),0);
+                                tempValue = limitObjWidth - startPos.left;
+                                tempValue2 = limitObjHeight - positionValue;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
+                                if(moveValue2 >= tempValue2){
+                                    moveValue2 = tempValue2;
+                                }
+                                if(moveValue2 === minHeight){
+                                    targetObj.css({width:moveValue,height:moveValue2});
+                                }else{
+                                    targetObj.css({width:moveValue,height:moveValue2,top:positionValue});
+                                }                           
                             }else if(resizeValue === 'rb'){
                                 moveValue = startPos.startWidth + moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
                                 moveValue2 = startPos.startHeight + moveValueY;
                                 moveValue2 = moveValue2 <= minHeight ? minHeight : moveValue2;
+                                tempValue = limitObjWidth - startPos.left;
+                                tempValue2 = limitObjHeight - startPos.top;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
+                                if(moveValue2 >= tempValue2){
+                                    moveValue2 = tempValue2;
+                                } 
                                 targetObj.css({width:moveValue,height:moveValue2});
                             }else if(resizeValue === 'lt'){
-                                positionValue = startPos.left + moveValueX;
+                                positionValue = Math.max((startPos.left + moveValueX),0);
                                 moveValue = startPos.startWidth - moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
-                                positionValue2 = startPos.top + moveValueY;
+                                positionValue2 = Math.max((startPos.top + moveValueY),0);
                                 moveValue2 = startPos.startHeight - moveValueY;
                                 moveValue2 = moveValue2 <= minHeight ? minHeight : moveValue2;
-                                targetObj.css({width:moveValue,height:moveValue2,left:positionValue,top:positionValue2});
+                                tempValue = limitObjWidth - positionValue;
+                                tempValue2 = limitObjHeight - positionValue2;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
+                                if(moveValue2 >= tempValue2){
+                                    moveValue2 = tempValue2;
+                                }
+                                if(moveValue === minWidth){
+                                    if(moveValue2 !== minHeight){
+                                        targetObj.css({width:moveValue,height:moveValue2,top:positionValue2});
+                                    }else{
+                                        targetObj.css({width:moveValue,height:moveValue2});
+                                    }
+                                }else if(moveValue2 === minHeight){
+                                    targetObj.css({width:moveValue,height:moveValue2,left:positionValue});
+                                }else{
+                                    targetObj.css({width:moveValue,height:moveValue2,left:positionValue,top:positionValue2});
+                                }       
                             }else{
                                 //lb
-                                positionValue = startPos.left + moveValueX;
+                                positionValue = Math.max((startPos.left + moveValueX),0);
                                 moveValue = startPos.startWidth - moveValueX;
                                 moveValue = moveValue <= minWidth ? minWidth : moveValue;
                                 moveValue2 = startPos.startHeight + moveValueY;
                                 moveValue2 = moveValue2 <= minHeight ? minHeight : moveValue2;
-                                targetObj.css({width:moveValue,height:moveValue2,left:positionValue});
+                                tempValue = limitObjWidth - positionValue;
+                                tempValue2 = limitObjHeight - startPos.top;
+                                if(moveValue >= tempValue){
+                                    moveValue = tempValue;
+                                }
+                                if(moveValue2 >= tempValue2){
+                                    moveValue2 = tempValue2;
+                                }
+                                if(moveValue === minWidth){
+                                    targetObj.css({width:moveValue,height:moveValue2});
+                                }else{
+                                    targetObj.css({width:moveValue,height:moveValue2,left:positionValue});
+                                } 
                             }
                         }
                     }

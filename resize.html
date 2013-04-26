@@ -36,24 +36,34 @@
             background: #000;
             color: #fff;
         }
-        #dragMe2{
+        #dragMe2,#dragMe1{
             background: #333;
             color: #000;
-            margin: 20px;
+            margin: 100px 0 0 200px;
+            overflow: hidden;
+        }
+        #dragMe1{
+            background: blue;
         }
         #dragWrapper{
-            position: relative;
-            width: 800px;
+            width: 600px;
+            height:600px;
             margin: auto;
-            height: 800px;
             background: red;
+            position: relative;
+        }
+        .dragContainer img{
+            width: 100%;
+        }
+        #drag3{
+            background: #fff;
         }
     </style>
 </head>
 <body>
-<div id="dialogWrapper">
+<div id="dragWrapper">
     <div id="dragMe1" class="dragContainer">
-        <h2 class="dragTarget">Drag Me Test1</h2>
+        <h2 class="dragTarget">Drag Me Test11111111111111</h2>
         <div class="dragContent">
             <ul>
                 <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
@@ -68,28 +78,24 @@
             </ul>
         </div>
     </div>
-</div>
-<div id="dragWrapper">
     <div id="dragMe2" class="dragContainer">
         <div class="dragContent">
-            <ul>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-                <li>温州高官情妇爆料市领导共用情妇 称遭死亡威胁</li>
-            </ul>
+            <img src='http://www.chaobaida.com/files/common/images/items/310x/20012291101.jpg' />
         </div>
+    </div>
+    <div id="drag3" class='dragContainer1'>
+        <div id="dragStart" style="height:40px;line-height:40px">称遭死亡威胁</div>
+        <div>温州高官情妇爆料市领导共用情妇</div>
+        <div>温州高官情妇爆料市领导共用情妇</div>
+        <div>温州高官情妇爆料市领导共用情妇</div>
     </div>
 </div>
 
 <script type="text/javascript">
-    new NAVY.Resize("#dragMe2");
-    new NAVY.Drag('#dragMe2','#dragMe2',{left:100,top:30});
+    new NAVY.Resize(".dragContainer");
+    new NAVY.Drag('.dragContainer','.dragContainer');
+    new NAVY.Resize('#drag3');
+    new NAVY.Drag('#dragStart','.dragContainer1');
 </script>
 </body>
 </html>
