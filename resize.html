@@ -36,7 +36,7 @@
             background: #000;
             color: #fff;
         }
-        #dragMe2,#dragMe1{
+        .dragContainer{
             background: #333;
             color: #000;
             margin: 100px 0 0 200px;
@@ -51,6 +51,9 @@
             margin: 20px auto;
             background: red;
             position: relative;
+        }
+        .dragContainer{
+            overflow: hidden;
         }
         .dragContainer img{
             width: 100%;
@@ -100,12 +103,19 @@
     var tempDrag1 = new NAVY.Drag('.dragContainer','.dragContainer');
     new NAVY.Resize('#drag3');
     var tempDrag2 = new NAVY.Drag('#dragStart','.dragContainer1');
+    var index = 1;
     $('#save').click(function(){
-        tempDrag1.setCursorDefault();
-        tempDrag2.setCursorDefault();
-        $('#tempWrapper').html($('#dragWrapper').clone());
-        tempDrag1.setCursorMove();
-        tempDrag2.setCursorMove();
+//        tempDrag1.setCursorDefault();
+//        tempDrag2.setCursorDefault();
+//        $('#tempWrapper').html($('#dragWrapper').clone());
+//        tempDrag1.setCursorMove();
+//        tempDrag2.setCursorMove();
+        var tempId = 'temp'+index;
+        console.log(tempId);
+        $('<div id='+tempId+' class="dragContainer"><div class="dragContent"><img src="http://img04.taobaocdn.com/bao/uploaded/i4/T13EitXkR3XXaGkUDa_122534.jpg" /></div></div>').appendTo('#dragWrapper');
+        new NAVY.Resize('#'+tempId);
+        var tempDrag3 = new NAVY.Drag('#'+tempId,'#'+tempId);
+        index++;
     })
 </script>
 </body>
