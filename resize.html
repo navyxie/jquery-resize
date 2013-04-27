@@ -90,13 +90,23 @@
         <div>温州高官情妇爆料市领导共用情妇</div>
     </div>
 </div>
+<h2 id="save">保存</h2>
+<div id="tempWrapper">
+
+</div>
 <script type="text/javascript">
     new NAVY.Resize('#dragWrapper',{startWidth:800,startHeight:800,isL:false,isT:false,isR:false,isRT:false,isRB:false,isLT:false,isLB:false,isLimit:false});
     new NAVY.Resize(".dragContainer");
-    new NAVY.Drag('.dragContainer','.dragContainer');
+    var tempDrag1 = new NAVY.Drag('.dragContainer','.dragContainer');
     new NAVY.Resize('#drag3');
-    new NAVY.Drag('#dragStart','.dragContainer1');
-
+    var tempDrag2 = new NAVY.Drag('#dragStart','.dragContainer1');
+    $('#save').click(function(){
+        tempDrag1.setCursorDefault();
+        tempDrag2.setCursorDefault();
+        $('#tempWrapper').html($('#dragWrapper').clone());
+        tempDrag1.setCursorMove();
+        tempDrag2.setCursorMove();
+    })
 </script>
 </body>
 </html>
