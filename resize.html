@@ -5,10 +5,14 @@
     <title>resize</title>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <link rel="stylesheet" type="text/css" href="public/css/jquery.resize.css" />
+    <link rel="stylesheet" type="text/css" href="public/css/scroll.css" />
     <script type="text/javascript" src="public/js/jquery.js"></script>
+    <script type="text/javascript" src="public/js/jquery.mousewheel.js"></script>
     <script type="text/javascript" src="public/js/navy.util.js"></script>
     <script type="text/javascript" src="public/js/jquery.drag.js"></script>
+    <script type="text/javascript" src="public/js/jquery.scroll.js"></script>
     <script type="text/javascript" src="public/js/jquery.resize.js"></script>
+    <script type="text/javascript" src="public/js/dapei.js"></script>
     <title>navy drag</title>
     <style type="text/css">
         *{
@@ -47,19 +51,59 @@
         }
         #dragWrapper{
             width: 600px;
-            height:600px;
             margin: 20px auto;
             background: red;
             position: relative;
         }
         .dragContainer{
             overflow: hidden;
+            display: none;
         }
         .dragContainer img{
             width: 100%;
         }
         #drag3{
             background: #fff;
+        }
+        #floatRight{
+            width: 300px;
+            position: fixed;
+            right: 0;
+            top:20px;
+        }
+        #floatRight ul{
+            overflow: hidden;
+        }
+        #floatRight ul li{
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            float: left;
+        }
+        #floatRight ul li img{
+            width: 100%;
+        }
+        .itemDragContainer{
+            overflow: hidden;
+            background: #ccc;
+        }
+        .itemDragContainer img{
+            width: 100%;
+        }
+        #tempItemDrag{
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+        }
+        #tempItemDrag img{
+            width: 100%;
+        }
+        .collectionContainer{
+            width:100%;
+            height:400px;
+            background: #000;
+            margin-bottom: 20px;
+            position: relative;
         }
     </style>
 </head>
@@ -86,36 +130,61 @@
             <img src='http://www.chaobaida.com/files/common/images/items/310x/20012291101.jpg' />
         </div>
     </div>
-    <div id="drag3" class='dragContainer1'>
-        <div id="dragStart" style="height:40px;line-height:40px">称遭死亡威胁</div>
-        <div>温州高官情妇爆料市领导共用情妇</div>
-        <div>温州高官情妇爆料市领导共用情妇</div>
-        <div>温州高官情妇爆料市领导共用情妇</div>
+    <!--<div id="drag3" class='dragContainer1'>-->
+        <!--<div id="dragStart" style="height:40px;line-height:40px">称遭死亡威胁</div>-->
+        <!--<div>温州高官情妇爆料市领导共用情妇</div>-->
+        <!--<div>温州高官情妇爆料市领导共用情妇</div>-->
+        <!--<div>温州高官情妇爆料市领导共用情妇</div>-->
+    <!--</div>-->
+    <div id="content">
+        <div class="collectionContainer"></div>
+        <div class="collectionContainer"></div>
+        <div class="collectionContainer"></div>
+        <div class="collectionContainer"></div>
     </div>
 </div>
 <h2 id="save">保存</h2>
 <div id="tempWrapper">
 
 </div>
+<div id="floatRight">
+    <ul>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/19328159146.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/source/24046140351.png" /></li>
+        <li class="dragItem"><img src="http://img02.taobaocdn.com/bao/uploaded/i2/15795021796259218/T1fvacXDtfXXXXXXXX_!!0-item_pic.jpg_310x310.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/19354503648.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/9934246320.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/17390010052.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/15132017740.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/source/15694064907.png" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/20012291101.jpg" /></li>
+        <li class="dragItem"><img src="http://img04.taobaocdn.com/bao/uploaded/i4/17845021692522902/T117CbXwhaXXXXXXXX_!!0-item_pic.jpg_310x310.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/17453978518.jpg" /></li>
+        <li class="dragItem"><img src="http://img04.taobaocdn.com/bao/uploaded/i4/11299021179114918/T1dl41XytcXXXXXXXX_!!0-item_pic.jpg_310x310.jpg" /></li>
+        <li class="dragItem"><img src="http://www.chaobaida.com/files/common/images/items/310x/16598411825.jpg" /></li>
+        <li class="dragItem"><img src="http://img02.taobaocdn.com/bao/uploaded/i2/18049020381325807/T1Fz8HXuVeXXXXXXXX_!!0-item_pic.jpg_310x310.jpg" /></li>
+        <li class="dragItem"><img src="http://img01.taobaocdn.com/bao/uploaded/i1/17845021537949616/T1CLR9XsleXXXXXXXX_!!0-item_pic.jpg_310x310.jpg" /></li>
+    </ul>
+</div>
 <script type="text/javascript">
-    new NAVY.Resize('#dragWrapper',{startWidth:800,startHeight:800,isL:false,isT:false,isR:false,isRT:false,isRB:false,isLT:false,isLB:false,isLimit:false});
-    new NAVY.Resize(".dragContainer");
-    var tempDrag1 = new NAVY.Drag('.dragContainer','.dragContainer');
-    new NAVY.Resize('#drag3');
-    var tempDrag2 = new NAVY.Drag('#dragStart','.dragContainer1');
-    var index = 1;
+//    new NAVY.Resize('#dragWrapper',{startWidth:800,startHeight:800,isL:false,isT:false,isR:false,isRT:false,isRB:false,isLT:false,isLB:false,isLimit:false});
+//    new NAVY.Resize(".dragContainer");
+//    var tempDrag1 = new NAVY.Drag('.dragContainer','.dragContainer');
+//    new NAVY.Resize('#drag3');
+//    var tempDrag2 = new NAVY.Drag('#dragStart','.dragContainer1');
+//    var index = 1;
     $('#save').click(function(){
 //        tempDrag1.setCursorDefault();
 //        tempDrag2.setCursorDefault();
-//        $('#tempWrapper').html($('#dragWrapper').clone());
+        $('#tempWrapper').html($('#dragWrapper').clone());
 //        tempDrag1.setCursorMove();
 //        tempDrag2.setCursorMove();
-        var tempId = 'temp'+index;
-        console.log(tempId);
-        $('<div id='+tempId+' class="dragContainer"><div class="dragContent"><img src="http://img04.taobaocdn.com/bao/uploaded/i4/T13EitXkR3XXaGkUDa_122534.jpg" /></div></div>').appendTo('#dragWrapper');
-        new NAVY.Resize('#'+tempId);
-        var tempDrag3 = new NAVY.Drag('#'+tempId,'#'+tempId);
-        index++;
+//        var tempId = 'temp'+index;
+//        console.log(tempId);
+//        $('<div id='+tempId+' class="dragContainer"><div class="dragContent"><img src="http://img04.taobaocdn.com/bao/uploaded/i4/T13EitXkR3XXaGkUDa_122534.jpg" /></div></div>').appendTo('#dragWrapper');
+//        new NAVY.Resize('#'+tempId);
+//        var tempDrag3 = new NAVY.Drag('#'+tempId,'#'+tempId);
+//        index++;
     })
 </script>
 </body>
