@@ -25,11 +25,11 @@ $(function(){
      * 向目标容器对象增加一个拖动对象
      * @param data 需要传入的数据，一般是宝贝信息
      */
-    function addOneItem(data){
+    function addOneItem(data,obj){
         var html = '<div class="itemDragContainer"><img class="" src="'+data.img+'" /></div>';
         var id = 'dragItemId'+itemIndex;
         var idSelector = '#'+id;//拼接id选择器
-        $(html).appendTo(dragWrapper).attr('id',id);
+        $(html).appendTo(obj).attr('id',id);
         new NAVY.Resize(idSelector);
         dragItemArr.push(new NAVY.Drag(idSelector,idSelector,{left:data.left,top:data.top}));//将实例化出来的拖动对象暂存到dragItemArr中
         itemIndex++;
@@ -57,16 +57,32 @@ $(function(){
             var pageX = e.pageX;
             var pageY = e.pageY;
             //当拖动的宝贝在在目标容器对象的范围内处理操作
-            if((pageX > (wrapperOffset.left - dragItemW) && pageX < isDragRound.pageX) && (pageY > (wrapperOffset.top - dragItemH) && pageY < isDragRound.pageY)){
-                var tempLeft = pageX - wrapperOffset.left - ajustPosition.left;
-                var tempTop = pageY - wrapperOffset.top - ajustPosition.top;
-                var rightBound = wrapperWH.width - dragItemW - boundSpace;
-                var bottomBound = wrapperWH.height - dragItemH - boundSpace;
-                tempLeft = Math.min(rightBound,Math.max(tempLeft,boundSpace));//适配拖动对象水平方向上的值
-                tempTop = Math.min(bottomBound,Math.max(tempTop,boundSpace));//适配拖动对象垂直方向上的值
-                itemData.left = tempLeft;
-                itemData.top = tempTop;
-                addOneItem(itemData);
+            // if((pageX > (wrapperOffset.left - dragItemW) && pageX < isDragRound.pageX) && (pageY > (wrapperOffset.top - dragItemH) && pageY < isDragRound.pageY)){
+            //     var tempLeft = pageX - wrapperOffset.left - ajustPosition.left;
+            //     var tempTop = pageY - wrapperOffset.top - ajustPosition.top;
+            //     var rightBound = wrapperWH.width - dragItemW - boundSpace;
+            //     var bottomBound = wrapperWH.height - dragItemH - boundSpace;
+            //     tempLeft = Math.min(rightBound,Math.max(tempLeft,boundSpace));//适配拖动对象水平方向上的值
+            //     tempTop = Math.min(bottomBound,Math.max(tempTop,boundSpace));//适配拖动对象垂直方向上的值
+            //     itemData.left = tempLeft;
+            //     itemData.top = tempTop;
+            //     addOneItem(itemData);
+            // }
+            for(var i = 0 , len = collectionContainerPos.length ; i < len ; i++){
+                var tempObj = collectionContainerPos[i].obj;
+                var pos = collectionContainerPos[i].pos;
+                if((pageX > (wrapperOffset.left - dragItemW) && pageX < isDragRound.pageX) && (pageY > (pos.leftTop.top - dragItemH) && pageY < pos.rightBottom.top)){
+                    var tempLeft = pageX - pos.leftTop.left - ajustPosition.left;
+                    var tempTop = pageY - pos.rightBottom.top - ajustPosition.top;
+                    var rightBound = cContainerSize.width - dragItemW - boundSpace;
+                    var bottomBound = cContainerSize.height - dragItemH - boundSpace;
+                    tempLeft = Math.min(rightBound,Math.max(tempLeft,boundSpace));//适配拖动对象水平方向上的值
+                    tempTop = Math.min(bottomBound,Math.max(tempTop,boundSpace));//适配拖动对象垂直方向上的值
+                    itemData.left = tempLeft;
+                    itemData.top = tempTop+(pageY-pos.leftTop.top-ajustPosition.top-boundSpace);
+                    addOneItem(itemData,tempObj);
+                    break;
+                }
             }
             //清除克隆对象
             if(cloneObj.length){
@@ -81,6 +97,27 @@ $(function(){
                 cloneObj.css({left:(e.pageX-ajustPosition.left),top:(e.pageY-ajustPosition.top)});
             }
         });
+    var collectionContainerPos = [];
+    var cContainerSize = {width:600,height:400};
+    recordCollectionContainer();
+    function recordCollectionContainer(){
+        collectionContainerPos = [];
+        var collectionContainerObjs = $('#content').find('.collectionContainer'),i = 0 , len = collectionContainerObjs.length;
+        for(;i<len;i++){
+            var curObj = $(collectionContainerObjs[i]);
+            var curOffset = curObj.offset();
+            collectionContainerPos.push({
+                obj:curObj,
+                pos:{
+                    leftTop:curOffset,
+                    rightBottom:{
+                        left:curOffset.left+cContainerSize.width,
+                        top:curOffset.top+cContainerSize.height
+                    }
+                }
+            });
+        }
+    }
     $('#save').click(function(){
         var dragItemArrLen = dragItemArr.length,i = 0;
         //清除移动鼠标样式
